@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -41,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'djoser',
 
     'account',
     'coursefront'
@@ -145,3 +149,36 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL= 'account.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+   'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
+}
+
+DJOSER= {
+    'USER_ID_FIELD': 'slug',
+    'LOGIN_FIELD': 'email',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True, 
+    'ACTIVATION_URL': 'api/v1/users/activate/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password-reset/{uid}/{token}',
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'SERIALIZERS': {
+        'user_create': "account.serializers.UserCreateSerializer",
+    }
+}
+
+
+EMAI_HOST= 'smtp4dev'
+EMAIL_HOST_USER= ''
+EMAIL_HOST_PASSWORD= ''
+EMAIL_PORT= 2525
+DEFAULT_FROM_EMAIL= 'fuad@teamx.com'
