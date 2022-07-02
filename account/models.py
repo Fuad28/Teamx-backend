@@ -31,7 +31,6 @@ class User(AbstractUser, PermissionsMixin):
 	username = None
 	email= models.EmailField(unique=True, blank= False)
 	full_name= models.CharField(max_length=30, blank=False, null=False)
-	slug= models.SlugField(max_length=200)
 	is_verified= models.BooleanField(default=False)
 	is_blocked= models.BooleanField(default=False)
 	is_active= models.BooleanField(default=False)
@@ -40,12 +39,9 @@ class User(AbstractUser, PermissionsMixin):
 	REQUIRED_FIELDS= ["full_name"]
 	objects= UserManager()
 
-	def save(self, *args, **kwargs):
-		super().save(*args, **kwargs)
-		self.slug= slugify(self.full_name)
-
 class Profile(models.Model):
 	user= models.OneToOneField(User, on_delete= models.CASCADE)
+	slug= models.SlugField(max_length=200)
 	image= models.URLField(null=True, blank=True)
 	biography= models.TextField(blank=True, null=True)
 	language= models.CharField(max_length=30, default= "english")
@@ -60,4 +56,8 @@ class Profile(models.Model):
 	def __str__(self):
 		return f"{self.user.first_name} {self.user.last_name} profile"
 
+	def save(self, *args, **kwargs):
+		self.slug= slugify(self.user.full_name)
+		super().save(*args, **kwargs)
+		
 

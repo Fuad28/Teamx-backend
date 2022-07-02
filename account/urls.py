@@ -11,16 +11,20 @@ import account.views as user_views
 router = DefaultRouter()
 router.register("", djoser_views.UserViewSet)
 
+
 User = get_user_model()
 
-urlpatterns = router.urls
+# urlpatterns = router.urls
 
 
-urlpatterns= urlpatterns + [
+custom_urls= [
     #Token
     path("auth/login/", simple_jwt_views.TokenObtainPairView.as_view(), name="login"),
     path("auth/refresh/", simple_jwt_views.TokenRefreshView.as_view(), name="refresh-token"),
     path("auth/verify/", simple_jwt_views.TokenVerifyView.as_view(), name="verify-token"),
 
-    path("activate/<uid>/<token>/", user_views.UserActivationView.as_view(), name="activate-account")
+    path("activate/<uid>/<token>/", user_views.UserActivationView.as_view(), name="activate-account"),
+    path("profile/<slug:slug>", user_views.ProfileView.as_view(), name="profile")
     ]
+
+urlpatterns = custom_urls + router.urls

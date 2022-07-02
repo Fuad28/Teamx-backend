@@ -158,12 +158,12 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+   'AUTH_HEADER_TYPES': ('JWT', 'Bearer'),
    'ACCESS_TOKEN_LIFETIME': timedelta(days=1)
 }
 
 DJOSER= {
-    'USER_ID_FIELD': 'slug',
+    # 'USER_ID_FIELD': 'slug',
     'LOGIN_FIELD': 'email',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
@@ -173,6 +173,8 @@ DJOSER= {
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
     'SERIALIZERS': {
         'user_create': "account.serializers.UserCreateSerializer",
+        # 'user': "account.serializers.ProfileSerializer",
+        # 'current_user': "account.serializers.ProfileSerializer",
     }
 }
 
