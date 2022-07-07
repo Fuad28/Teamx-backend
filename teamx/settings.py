@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'djoser',
+    
 
     'account',
     'coursefront'
@@ -175,6 +176,14 @@ DJOSER= {
         'user_create': "account.serializers.UserCreateSerializer",
         # 'user': "account.serializers.ProfileSerializer",
         # 'current_user': "account.serializers.ProfileSerializer",
+    }
+}
+
+# AUTHLIB CLIENTS
+AUTHLIB_OAUTH_CLIENTS = {
+    'google': {
+        'client_id':os.environ.get("GOOGLE_CLIENT_ID"),
+        'client_secret': os.environ.get("GOOGLE_SECRET_KEY"),
     }
 }
 

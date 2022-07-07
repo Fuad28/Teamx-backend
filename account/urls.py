@@ -23,8 +23,13 @@ custom_urls= [
     path("auth/refresh/", simple_jwt_views.TokenRefreshView.as_view(), name="refresh-token"),
     path("auth/verify/", simple_jwt_views.TokenVerifyView.as_view(), name="verify-token"),
 
+    #social auth
+    path('social-auth/login/', user_views.social_login),
+    path('social-auth/', user_views.social_auth, name='authorize'),
+
     path("activate/<uid>/<token>/", user_views.UserActivationView.as_view(), name="activate-account"),
-    path("profile/<slug:slug>", user_views.ProfileView.as_view(), name="profile")
+    path("profile/<slug:slug>", user_views.ProfileView.as_view(), name="profile"),
+    
     ]
 
 urlpatterns = custom_urls + router.urls
