@@ -73,15 +73,10 @@ def social_login(request):
 
 def social_auth(request):
     token = oauth.google.authorize_access_token(request)
-    # print(token)
     user_info= token.get('userinfo')
 
     #check if user does not exit and save user
     if not User.objects.filter(email= user_info["email"]).exists():
         User.objects.create(email=user_info["email"], full_name= user_info["name"])
 
-    # data= json.dumps()
-    # return JSONRenderer().render({"access_token": token.get('access_token')})
-    from pprint import pprint
-    pprint(token)
     return HttpResponse(json.dumps({"access_token": token.get('access_token')}))

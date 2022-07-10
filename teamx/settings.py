@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+from celery.schedules import crontab
 
 load_dotenv()
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'djoser',
+    'django_celery_beat',
     
 
     'account',
@@ -193,3 +195,27 @@ EMAIL_HOST_USER= ''
 EMAIL_HOST_PASSWORD= ''
 EMAIL_PORT= 2525
 DEFAULT_FROM_EMAIL= 'fuad@teamx.com'
+
+
+CELERY_BROKER_URL= 'redis://localhost:6379/1'
+# CELERY_TIMEZONE = 'Europe/Warsaw'
+
+CELERY_BEAT_SCHEDULE= {
+    "warn_inactive_users": {
+        "task": 'account.tasks.send_account_delete_mail',
+        "schedule": crontab(day_of_week= 1, hour= 7, minute=30), #meaning 7:30AM every monday,
+        "args": ["Hello world"],
+    },
+
+    "delete_inactive_users": {
+        "task": 'account.tasks.delete_unactivated_accounts',
+        "schedule": crontab(day_of_week= 1, hour= 7, minute=30), 
+        "args": ["Hello world"],
+    },
+
+    "notify_customers": {
+        "task": 'playground.tasks.notify_customers',
+        "schedule": crontab(day_of_week= 1, hour= 7, minute=30), 
+        "args": ["Hello world"],
+    },
+}
