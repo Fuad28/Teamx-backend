@@ -3,12 +3,12 @@ from templated_mail.mail import BaseEmailMessage
 from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpResponse
 from django.conf import settings
-
-from djoser import utils
+from django.utils import  timezone
 
 import os
+from djoser import utils
 from celery import shared_task
-from datetime import datetime, timedelta
+from datetime import timedelta
 from dotenv import load_dotenv
 
 from .models import User
@@ -21,12 +21,12 @@ def upload_image_to_cloud(image):
     pass
 
 def get_users(days):
-    """Utility function to get users based on the number of days for the next twoo tasks"""
+    """Utility function to get users based on the number of days for the next two tasks"""
 
     users= []
 
     for user in User.objects.all():
-        if (not user.is_active) & (datetime.datetime.now() - user.date_joined > timedelta(days= days)):
+        if (not user.is_active) & (timezone.now() - user.date_joined > timedelta(days= days)):
             users.append(user)
 
     return users
@@ -39,8 +39,6 @@ def get_activate_email_url(user):
     ids["token"] = default_token_generator.make_token(user)
     HOST = os.environ.get("HOST", default="http://localhost:8000/")
     uri= HOST + settings.DJOSER.get("ACTIVATION_URL")
-
-    print(uri.format(**ids))
 
     return uri.format(**ids)
 
@@ -59,7 +57,7 @@ def send_account_delete_warning_mail():
 
         try:
             msg= BaseEmailMessage(template_name= 'account/send_reminder_mail.html', context= context)
-            msg.send(to= mails[idx])
+            msg.send(to= [mails[idx]])
         except BadHeaderError:
             return HttpResponse('Invalid header found.')
 
@@ -68,8 +66,6 @@ def send_account_delete_warning_mail():
 @shared_task
 def delete_unactivated_accounts():
     """Delete accounts that have not been activated  after six days of creation"""
-    users= get_users(6)
-
-    User.objects.filter(email__in=users).delete()
-
-    print(f"Deleted users: {[user.email for user in users]}")
+    users_emails= [user.email for user in get_users(6)]
+    User.objects.filter(email__in=users_emails).delete()
+    print(f"Deleted users: {users_emails}")

@@ -200,22 +200,18 @@ DEFAULT_FROM_EMAIL= 'fuad@teamx.com'
 CELERY_BROKER_URL= 'redis://localhost:6379/1'
 # CELERY_TIMEZONE = 'Europe/Warsaw'
 
-CELERY_BEAT_SCHEDULE= {
-    "warn_inactive_users": {
-        "task": 'account.tasks.send_account_delete_mail',
-        "schedule": crontab(day_of_week= 1, hour= 7, minute=30), #meaning 7:30AM every monday,
-        "args": ["Hello world"],
-    },
+# CELERY_BEAT_SCHEDULE= {
+#     "warn_inactive_users": {
+#         "task": 'account.tasks.send_account_delete_mail',
+#         "schedule": crontab(day_of_week= 1, hour= 7, minute=30), #meaning 7:30AM every monday,
+#         "args": ["Hello world"],
+#     },
 
-    "delete_inactive_users": {
-        "task": 'account.tasks.delete_unactivated_accounts',
-        "schedule": crontab(day_of_week= 1, hour= 7, minute=30), 
-        "args": ["Hello world"],
-    },
+#     "delete_inactive_users": {
+#         "task": 'account.tasks.delete_unactivated_accounts',
+#         "schedule": crontab(day_of_week= 1, hour= 7, minute=30), 
+#         "args": ["Hello world"],
+#     },
+# }
 
-    "notify_customers": {
-        "task": 'playground.tasks.notify_customers',
-        "schedule": crontab(day_of_week= 1, hour= 7, minute=30), 
-        "args": ["Hello world"],
-    },
-}
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
