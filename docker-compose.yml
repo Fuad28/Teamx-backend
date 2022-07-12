@@ -18,7 +18,7 @@ services:
     environment:
       - POSTGRES_DB=teamx
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Abiodu28
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - '5432:5432'
     volumes: 
