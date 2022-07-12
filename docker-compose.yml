@@ -1,0 +1,84 @@
+version: '3.9'
+services:
+  web:
+    build: .
+    command: ./wait-for-it.sh db:5432 -- ./docker-entrypoint.sh
+    ports:
+      - 8000:8000
+    depends_on:
+      - redis
+      - db
+    restart: on-failure
+    volumes:
+      - .:/app
+  
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=teamx
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Abiodu28
+    ports:
+      - '5432:5432'
+    volumes: 
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+    restart: always
+    volumes:
+      - redisdata:/data
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    ports:
+      - 5000:80
+      - 25:25
+      - 143:143
+    restart: always
+
+    volumes:
+        - smtp4devdata:/smtp4dev
+  celery:
+    build: .
+    command: celery -A teamx worker --loglevel=info
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+  celery-beat:
+    build: .
+    command:  celery -A teamx beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler #celery -A teamx beat --loglevel=info
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - .:/app
+  # flower:
+  #   build: .
+  #   command: celery -A storefront flower
+  #   depends_on:
+  #     - web
+  #     - redis
+  #     - celery
+  #   environment:
+  #     - DEBUG=1
+  #     - CELERY_BROKER=redis://redis:6379/0
+  #     - CELERY_BACKEND=redis://redis:6379/0
+  #   ports:
+  #     - 5555:5555
+  # tests:
+  #   build: .
+  #   command: ./wait-for-it.sh db:5432 -- ptw
+  #   depends_on:
+  #     - redis
+  #     - db
+  #   tty: true
+  #   volumes:
+  #     - .:/app
+volumes:
+  pgdata:
+  redisdata:  
+  smtp4devdata:  

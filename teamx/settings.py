@@ -94,13 +94,24 @@ WSGI_APPLICATION = 'teamx.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'teamx',
+#         'USER': 'pro',
+#         'PORT': 5432,
+#         'PASSWORD': os.environ.get("POSTGRES_PASSWORD")
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'teamx',
-        'USER': 'pro',
-        'PORT': 5432,
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD")
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "teamx",
+        "USER": "postgres",
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": "db",  # set in docker-compose.yml
+        "PORT": 5432,  # default postgres port
     }
 }
 
@@ -176,8 +187,6 @@ DJOSER= {
     'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
     'SERIALIZERS': {
         'user_create': "account.serializers.UserCreateSerializer",
-        # 'user': "account.serializers.ProfileSerializer",
-        # 'current_user': "account.serializers.ProfileSerializer",
     }
 }
 
@@ -190,15 +199,18 @@ AUTHLIB_OAUTH_CLIENTS = {
 }
 
 
-EMAI_HOST= 'smtp4dev'
+EMAIL_HOST= 'smtp4dev'
 EMAIL_HOST_USER= ''
 EMAIL_HOST_PASSWORD= ''
-EMAIL_PORT= 2525
+EMAIL_PORT= 25
 DEFAULT_FROM_EMAIL= 'fuad@teamx.com'
 
 
-CELERY_BROKER_URL= 'redis://localhost:6379/1'
+CELERY_BROKER_URL= 'redis://redis:6379/1' #docker config
+# CELERY_BROKER_URL= 'redis://localhost:6379/1' 
 # CELERY_TIMEZONE = 'Europe/Warsaw'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # CELERY_BEAT_SCHEDULE= {
 #     "warn_inactive_users": {
@@ -213,5 +225,3 @@ CELERY_BROKER_URL= 'redis://localhost:6379/1'
 #         "args": ["Hello world"],
 #     },
 # }
-
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
